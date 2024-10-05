@@ -1,5 +1,6 @@
 import pygame
 
+
 # pygame setup
 pygame.init()
 screen = pygame.display.set_mode((800, 600))
@@ -8,10 +9,10 @@ running = True
 x,y=400,300
 
 
-Car = pygame.image.load("Car.png")
-CarRight = pygame.image.load("CarRight.png")
-CarLeft = pygame.image.load("CarLeft.png")
-CarDown = pygame.image.load("CarDown.png")
+Car = pygame.image.load(".\Images\Car.png")
+CarRight = pygame.image.load(".\Images\CarRight.png")
+CarLeft = pygame.image.load(".\Images\CarLeft.png")
+CarDown = pygame.image.load(".\Images\CarDown.png")
 
 
 car_image = Car        #Default image will be the car facing up
