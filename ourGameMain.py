@@ -6,8 +6,10 @@ pygame.init()
 screen = pygame.display.set_mode((800, 600))
 clock = pygame.time.Clock()
 running = True
-
+pygame.display.set_caption ("Speed Racer") #added Window mode title
 x,y = 0, 0
+pygame.mixer.music.load('speed.mp3') #added bgm sound
+pygame.mixer.music.play(-1)
 
 carCenter_Standard = 368+x, 268+y   # Takes into accout that the image is 64*64 bits
 carCenter_45 = (368-(32/3)-1)+x, (268-(32/3)-1)+y # It just works, Trust me 
@@ -29,7 +31,8 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE: #added exit on press "esc"
+            running = False
     # fill the screen with a color to wipe away anything from last frame
     screen.fill("skyblue")
 
