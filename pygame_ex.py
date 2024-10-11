@@ -4,10 +4,13 @@ import pygame
 # pygame setup
 pygame.init()
 screen = pygame.display.set_mode((800, 600))
+pygame.display.set_caption ("Speed Racer") #added Window mode title
 clock = pygame.time.Clock()
 running = True
 x,y=400,300
 
+pygame.mixer.music.load('speed.mp3') #added bgm sound
+pygame.mixer.music.play(-1)
 
 Car = pygame.image.load(".\Images\Car.png")
 CarRight = pygame.image.load(".\Images\CarRight.png")
@@ -23,6 +26,9 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE: #added exit on press "esc"
+            running = False
+            
 
     # fill the screen with a color to wipe away anything from last frame
     screen.fill("skyblue")
