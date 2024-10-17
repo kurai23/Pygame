@@ -4,7 +4,9 @@ import math
 
 # pygame setup
 pygame.init()
-size = width, height = 1920, 1080
+#size = width, height = 800, 600     # Normal Window
+#size = width, height = 1920, 1080      # For my PC monitor
+size = width, height = 1450, 950
 screen = pygame.display.set_mode(size)
 clock = pygame.time.Clock()
 running = True
@@ -12,9 +14,7 @@ running = True
 x,y,r = 0,0,360
 a = 0
 a_X, a_Y = 0,0
-
-# a = 0.7677650582
-
+s_X, s_Y = 0,0
 
 
 def limit(Varible, minV, maxV):
@@ -24,16 +24,13 @@ def limit(Varible, minV, maxV):
 def findCarCenter():
     return ((width-64)/2)-((12)*limit(((math.sin((r*0.06981317)+((3*math.pi)/2)))+1)*(0.7677650582), 0, 1)), ((height-64)/2)-((12)*limit(((math.sin((r*0.06981317)+((3*math.pi)/2)))+1)*(0.7677650582), 0, 1))
 
-#carCenter_Standard = (width-64)/2, ((height-64)/2)
-#carCenter_45 = 368-(32/3)-1, 268-(32/3)-1 #It just works, Trust me \
 carCenter_R = findCarCenter()
 
 carCenter = centerX, centerY = carCenter_R   #Corrected for Image Size
 
 Car = pygame.image.load(".\Images\Car_Main.png")
-centeringTestImage = pygame.image.load(".\Images\centeringTestImage.png")
+#centeringTestImage = pygame.image.load(".\Images\centeringTestImage.png")
 testObject = pygame.image.load(".\Images\_testObject.png")
-#testBackround = pygame.image.load(".\Images\_testLARGE.png")
 mapBack = pygame.image.load(".\Images\RaceTrack_500x500.png")
 
 car_image = Car     #Default image will be the car facing up
@@ -109,19 +106,54 @@ while running:
 
     # Slows Down Car
     if a > 0:
-        a -= 0.05
+        if a < 0.05:
+            a = 0
+        else:
+            a -= 0.05
     if a < 0:
-        a += 0.05
+        if a > -0.05:
+            a = 0
+        else:
+            a += 0.05
+    
 
-    a = limit(a, -8, 8)
+    a = limit(a, -10, 10)
     """
     a_X += math.sin(math.radians(r))*a
     a_X = limit(a_X, -math.sin(math.radians(r))*a, math.sin(math.radians(r))*a)
     a_Y += math.cos(math.radians(r))*a
     a_Y = limit(a_Y, -math.cos(math.radians(r))*a, math.cos(math.radians(r))*a)
     """
-    x -= math.sin(math.radians(r))*a
-    y -= math.cos(math.radians(r))*a
+    a_X = math.sin(math.radians(r))*a
+    a_Y = math.cos(math.radians(r))*a
+
+    # 1/(limit(abs(a), 0.0001, 10))*0.8
+
+    if s_X < a_X:
+        #s_X += ((abs(a)*-0.08)+(11.25*0.08))
+        s_X += 0.1
+    if s_X > a_X:
+        #s_X -= ((abs(a)*-0.08)+(11.25*0.08))
+        s_X -= 0.1
+
+    if s_Y < a_Y:
+        #s_Y += ((abs(a)*-0.08)+(11.25*0.08))
+        s_Y += 0.1
+    if s_Y > a_Y:
+        #s_Y -= ((abs(a)*-0.08)+(11.25*0.08))
+        s_Y -= 0.1
+    
+    if (s_X < 1 and s_X > -1) and (a == 0):
+        s_X = 0
+    if (s_Y < 1 and s_Y > -1) and (a == 0):
+        s_Y = 0
+
+
+    x -= s_X
+    y -= s_Y
+
+
+    # Going to Add and inertia system + Drifting
 
 
 
@@ -135,13 +167,17 @@ while running:
     # RENDER YOUR GAME HERE
 
     cordReadOut = font.render(str(round(x)) + "," + str(round(y)) + "," + str(round(r)), False, (0,0,0))
-    testWrite = font.render(str(a), False, (0,0,0))
+    testWrite = font.render(str(round(a_X)) + "," + str(round(a_Y)) + "," + str((a)), False, (0,0,0))
+    speedXWrite = font.render(str((s_X)), False, (0,0,0))
+    speedYWrite = font.render(str((s_Y)), False, (0,0,0))
 
     Backround_Center = (((400-5000)/2) - x, ((300-5000)/2)- y)
     findObjectCenter() # updates the rects position
 
     screen.blit(mapBackS, (Backround_Center))
     screen.blit(testWrite, (width * 0.8, height * 0.15))
+    screen.blit(speedXWrite, (width * 0.8, height * 0.2))
+    screen.blit(speedYWrite, (width * 0.8, height * 0.25))
     screen.blit(cordReadOut, (width * 0.8, height * 0.1))
     screen.blit(car_image, (carCenter)) #Adds the image of the car 
     screen.blit(testObject, (object_Rect.center))
@@ -151,6 +187,6 @@ while running:
     # flip() the display to put your work on screen
     pygame.display.flip()
 
-    clock.tick(120)  # limits FPS to 60
+    clock.tick(120)  # limits FPS to 120 because SPEEEEED
 
 pygame.quit()
