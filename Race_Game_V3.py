@@ -15,6 +15,7 @@ x,y,r = 0,0,360
 a = 0
 a_X, a_Y = 0,0
 s_X, s_Y = 0,0
+s_R = 90
 
 
 def limit(Varible, minV, maxV):
@@ -23,6 +24,9 @@ def limit(Varible, minV, maxV):
 # Another Don't worry about it
 def findCarCenter():
     return ((width-64)/2)-((12)*limit(((math.sin((r*0.06981317)+((3*math.pi)/2)))+1)*(0.7677650582), 0, 1)), ((height-64)/2)-((12)*limit(((math.sin((r*0.06981317)+((3*math.pi)/2)))+1)*(0.7677650582), 0, 1))
+
+def sgn(a):
+    return math.copysign(1, a)
 
 carCenter_R = findCarCenter()
 
@@ -110,6 +114,7 @@ while running:
         a -= 0.1
 
     # Slows Down Car
+
     if a > 0:
         if a < 0.05:
             a = 0
@@ -129,37 +134,47 @@ while running:
     a_Y += math.cos(math.radians(r))*a
     a_Y = limit(a_Y, -math.cos(math.radians(r))*a, math.cos(math.radians(r))*a)
     """
-    a_X = math.sin(math.radians(r))*a
-    a_Y = math.cos(math.radians(r))*a
+    a_X = math.sin(math.radians(r))
+    a_Y = math.cos(math.radians(r))
+    
+    if s_Y == 0:
+            #s_R = 90
+            math.pi-(math.pi/2)*(1+sgn(s_X))*(1-sgn(int(s_Y)^2))-(math.pi/4)*((2+sgn(s_X))*sgn(s_Y))-sgn(s_X*s_Y)*math.atan(0)
+    else:
+            #s_R = math.atan(s_X/s_Y)
+            s_R = math.pi-(math.pi/2)*(1+sgn(s_X))*(1-sgn(int(s_Y)^2))-(math.pi/4)*((2+sgn(s_X))*sgn(s_Y))-sgn(s_X*s_Y)*math.atan(math.radians((abs((s_X))-abs(s_Y)))/(abs((s_X))+abs((s_Y))))
 
     # 1/(limit(abs(a), 0.0001, 10))*0.8
+    
 
     if s_X < a_X:
         #s_X += ((abs(a)*-0.08)+(11.25*0.08))
-        s_X += 0.09
+        #s_X += 0.09
+        s_X += abs(math.sin((s_R)))*0.013
+        #0.0125 - 0.01125
     if s_X > a_X:
         #s_X -= ((abs(a)*-0.08)+(11.25*0.08))
-        s_X -= 0.09
+        #s_X -= 0.09
+        s_X -= abs(math.sin((s_R)))*0.013
 
     if s_Y < a_Y:
         #s_Y += ((abs(a)*-0.08)+(11.25*0.08))
-        s_Y += 0.09
+        #s_Y += 0.09
+        s_Y += abs(math.cos((s_R)))*0.013
     if s_Y > a_Y:
         #s_Y -= ((abs(a)*-0.08)+(11.25*0.08))
-        s_Y -= 0.09
-    
+        #s_Y -= 0.09
+        s_Y -= abs(math.cos((s_R)))*0.013
+
+
     if (s_X < 1 and s_X > -1) and (a == 0):
         s_X = 0
     if (s_Y < 1 and s_Y > -1) and (a == 0):
         s_Y = 0
 
 
-    x -= s_X
-    y -= s_Y
-
-
-    # Going to Add and inertia system + Drifting
-
+    x -= s_X*a
+    y -= s_Y*a
 
 
 
@@ -173,8 +188,7 @@ while running:
 
     cordReadOut = font.render(str(round(x)) + "," + str(round(y)) + "," + str(round(r)), False, (0,0,0))
     testWrite = font.render(str(round(a_X)) + "," + str(round(a_Y)), False, (0,0,0))
-    speedXWrite = font.render(str(round(s_X)), False, (0,0,0))
-    speedYWrite = font.render(str(round(s_Y)), False, (0,0,0))
+    speedWrite = font.render(str(round(s_X)) + "," + str(round(s_Y)), False, (0,0,0))
 
     Backround_Center = (((400-5000)/2) - x, ((300-5000)/2)- y)
     findObjectCenter() # updates the rects position
@@ -183,8 +197,8 @@ while running:
     screen.blit(outerMapS, (Backround_Center))
     #screen.blit(tMapS, (Backround_Center))
     screen.blit(testWrite, (width * 0.8, height * 0.15))
-    screen.blit(speedXWrite, (width * 0.8, height * 0.2))
-    screen.blit(speedYWrite, (width * 0.8, height * 0.25))
+    screen.blit(speedWrite, (width * 0.8, height * 0.2))
+    #screen.blit(speedYWrite, (width * 0.8, height * 0.25))
     screen.blit(cordReadOut, (width * 0.8, height * 0.1))
     screen.blit(testObject, (object_Rect.center))
     screen.blit(car_image, (carCenter)) #Adds the image of the car 
